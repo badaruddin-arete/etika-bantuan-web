@@ -353,7 +353,16 @@ function BatchAudit() {
 
       {error && (
         <div role="alert" className="flex gap-3 rounded-md border border-bad/40 bg-bad-soft p-4 text-sm text-bad">
-          <XCircle className="h-4 w-4 shrink-0 mt-0.5" />{error}
+          <XCircle className="h-4 w-4 shrink-0 mt-0.5" />
+          <div className="space-y-2">
+            <p>{error.message}</p>
+            {error.details.length > 0 && (
+              <ul className="list-disc pl-5">{error.details.map((d, i) => <li key={i}>{d}</li>)}</ul>
+            )}
+            {error.retry && (
+              <Button size="sm" variant="outline" onClick={run} disabled={loading}>Coba lagi</Button>
+            )}
+          </div>
         </div>
       )}
 

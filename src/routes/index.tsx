@@ -366,7 +366,7 @@ const STATUS: Record<StatusAlokasi, { label: string; cls: string; Icon: typeof C
 };
 const BIAS: Record<LevelBias, string> = {
   RENDAH: "border-border text-muted-foreground",
-  SEDANG: "border-warn/40 text-warn",
+  SEDANG: "border-foreground/40 text-foreground",
   TINGGI: "border-bad/40 text-bad",
 };
 

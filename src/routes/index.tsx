@@ -50,6 +50,11 @@ function rowErrors(r: Row) {
   return e;
 }
 
+function toErr(e: unknown, fallback: string) {
+  if (e instanceof ApiError) return { message: e.message, details: e.details, retry: e.kind === "server" };
+  return { message: fallback, details: [], retry: false };
+}
+
 const fieldCls = (err?: string) => (err ? "border-destructive focus-visible:ring-destructive" : "");
 const idFmt = new Intl.NumberFormat("id-ID");
 
@@ -79,7 +84,7 @@ function BatchAudit() {
   const [touched, setTouched] = useState<Set<string>>(new Set());
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<{ message: string; details: string[]; retry: boolean } | null>(null);
   const [result, setResult] = useState<{ data: AnalisisBatchResponse; mode: typeof mode } | null>(null);
   const [open, setOpen] = useState<Set<number>>(new Set());
   const focusRowId = useRef<number | null>(null);
@@ -92,7 +97,7 @@ function BatchAudit() {
         setAmbang(k.ambang_kuota);
         setBesaran(k.nilai_bantuan_per_pemohon);
       })
-      .catch((e) => setError(e instanceof ApiError ? e.message : "Gagal memuat konfigurasi."));
+      .catch((e) => setError(toErr(e, "Gagal memuat konfigurasi.")));
   }, [mode]);
 
   useEffect(() => {
@@ -154,7 +159,8 @@ function BatchAudit() {
       setResult({ data, mode });
       setOpen(new Set());
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : "Terjadi galat tak terduga.");
+      setResult(null);
+      setError(toErr(e, "Terjadi galat tak terduga."));
     } finally {
       setLoading(false);
     }
@@ -351,7 +357,7 @@ function BatchAudit() {
         </div>
       )}
 
-      {result && (
+      {result && !error && result.mode === mode && (
         <Results data={result.data} isDemo={result.mode === "demo"} ambang={ambang} open={open}
           toggle={(i) => setOpen((s) => { const n = new Set(s); n.has(i) ? n.delete(i) : n.add(i); return n; })} />
       )}
@@ -385,9 +391,13 @@ function Results({ data, isDemo, ambang, open, toggle }: {
     <section className="space-y-6 animate-in fade-in duration-200">
       <div className="flex items-baseline justify-between">
         <h2 className="font-serif text-2xl">Hasil audit</h2>
-        {isDemo && (
+        {isDemo ? (
           <span className="rounded border border-warn/40 bg-warn-soft px-2 py-0.5 text-xs text-warn">
             Data demo — bukan keluaran server
+          </span>
+        ) : (
+          <span className="rounded border border-ok/40 bg-ok-soft px-2 py-0.5 text-xs text-ok">
+            Keluaran server lokal
           </span>
         )}
       </div>

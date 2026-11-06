@@ -427,7 +427,9 @@ function Results({ data, isDemo, ambang, open, toggle }: {
               const isOpen = open.has(a.indeks_input);
               return (
                 <Fragment key={a.indeks_input}>
-                  <tr className="cursor-pointer border-b hover:bg-accent/40" onClick={() => toggle(a.indeks_input)}>
+                  <tr className="cursor-pointer border-b hover:bg-accent/40" onClick={() => toggle(a.indeks_input)}
+                    tabIndex={0} aria-expanded={isOpen}
+                    onKeyDown={(ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); toggle(a.indeks_input); } }}>
                     <td className="p-3 text-muted-foreground">
                       {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                     </td>

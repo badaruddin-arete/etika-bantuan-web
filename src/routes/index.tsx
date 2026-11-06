@@ -156,7 +156,7 @@ function BatchAudit() {
             </thead>
             <tbody>
               {rows.map((r, i) => {
-                const e = errors[i];
+                const e = errors[i] ?? {};
                 return (
                   <tr key={r.id} className="border-b align-top last:border-0">
                     <td className="p-3 min-w-48">
@@ -181,7 +181,7 @@ function BatchAudit() {
                     <td className="p-3 min-w-56">
                       <div className="flex items-center gap-3">
                         <Slider min={0} max={100} step={1} value={[r.skor_kelayakan_ml || 0]} className="flex-1"
-                          onValueChange={([v]) => update(r.id, { skor_kelayakan_ml: v })} />
+                          onValueChange={([v]) => update(r.id, { skor_kelayakan_ml: v ?? 0 })} />
                         <Input type="number" min={0} max={100} className={`num w-20 ${fieldCls(e.skor_kelayakan_ml)}`}
                           value={r.skor_kelayakan_ml} onChange={(ev) => update(r.id, { skor_kelayakan_ml: Number(ev.target.value) })} />
                       </div>

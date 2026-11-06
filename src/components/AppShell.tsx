@@ -57,17 +57,31 @@ function AppSidebar() {
 }
 
 function ConnectionChip() {
-  const { mode, setMode } = useMode();
+  const { mode, setMode, health } = useMode();
   const live = mode === "live";
+  const tone = !live
+    ? "border-warn/40 bg-warn-soft text-warn"
+    : health === "down"
+      ? "border-bad/40 bg-bad-soft text-bad"
+      : health === "ok"
+        ? "border-ok/40 bg-ok-soft text-ok"
+        : "border-border text-muted-foreground";
+  const dot = !live ? "bg-warn" : health === "down" ? "bg-bad" : health === "ok" ? "bg-ok" : "bg-muted-foreground";
+  const label = !live
+    ? "Demo · Data demo"
+    : health === "down"
+      ? "Live · Server tidak terjangkau"
+      : health === "ok"
+        ? "Live · Terhubung"
+        : "Live · Memeriksa…";
   return (
     <div className="flex items-center gap-3">
       <span
-        className={`inline-flex items-center gap-1.5 rounded border px-2 py-0.5 text-xs ${
-          live ? "border-ok/40 bg-ok-soft text-ok" : "border-warn/40 bg-warn-soft text-warn"
-        }`}
+        role="status"
+        className={`inline-flex items-center gap-1.5 rounded border px-2 py-0.5 text-xs ${tone}`}
       >
-        <span className={`h-1.5 w-1.5 rounded-full ${live ? "bg-ok" : "bg-warn"}`} />
-        {live ? "Live" : "Demo · Data demo"}
+        <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
+        {label}
       </span>
       <label className="flex items-center gap-2 text-xs text-muted-foreground">
         Live

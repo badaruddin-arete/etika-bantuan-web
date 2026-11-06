@@ -71,10 +71,13 @@
   --border: oklch(0.29 0.008 255);
   --input: oklch(0.32 0.008 255);
   --ring: oklch(0.6 0.01 255);
-  --bentham: oklch(0.78 0.11 190);
-  --bentham-soft: oklch(0.78 0.11 190 / 14%);
-  --kant: oklch(0.8 0.14 75);
-  --kant-soft: oklch(0.8 0.14 75 / 14%);
+  /* Lens colors: change here to recolor every chip, highlight and bar. */
+  --lens-bentham: oklch(0.78 0.11 190);
+  --lens-kant: oklch(0.72 0.1 295);
+  --bentham: var(--lens-bentham);
+  --bentham-soft: color-mix(in oklch, var(--lens-bentham) 14%, transparent);
+  --kant: var(--lens-kant);
+  --kant-soft: color-mix(in oklch, var(--lens-kant) 16%, transparent);
   --ok: oklch(0.78 0.15 160);
   --ok-soft: oklch(0.78 0.15 160 / 14%);
   --bad: oklch(0.74 0.16 15);
@@ -103,6 +106,10 @@
   }
   * {
     transition-duration: 180ms;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
   }
 }
 

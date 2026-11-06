@@ -301,14 +301,14 @@ function Results({ data, isDemo, ambang, open, toggle }: {
                     <td className="num p-3">{a.peringkat}</td>
                     <td className="p-3">{a.nama}</td>
                     <td className="p-3">
-                      <span className={`inline-flex items-center gap-1 rounded border px-2 py-0.5 text-xs font-medium ${s.cls}`}>
+                      <span className={`inline-flex items-center gap-1 whitespace-nowrap rounded border px-2 py-0.5 text-xs font-medium ${s.cls}`}>
                         <s.Icon className="h-3.5 w-3.5" />{s.label}
                       </span>
                     </td>
                     <td className="p-3">
                       {a.wajib_kant
-                        ? <span className="rounded border border-kant/40 bg-kant-soft px-2 py-0.5 text-xs text-kant">Kewajiban Kant</span>
-                        : <span className="rounded border border-bentham/40 bg-bentham-soft px-2 py-0.5 text-xs text-bentham">Skor Bentham</span>}
+                        ? <span className="whitespace-nowrap rounded border border-kant/40 bg-kant-soft px-2 py-0.5 text-xs text-kant">Kewajiban Kant</span>
+                        : <span className="whitespace-nowrap rounded border border-bentham/40 bg-bentham-soft px-2 py-0.5 text-xs text-bentham">Skor Bentham</span>}
                     </td>
                     <td className="p-3">
                       <div className="flex items-center gap-2">

@@ -1,4 +1,5 @@
 # Etika Bantuan (antarmuka web)
+**Demo langsung:** https://etika-bantuan-demo.lovable.app
 
 Dasbor audit untuk [API Etika Seleksi Bantuan Sosial](https://github.com/badaruddin-arete/etika-bantuan-api). Antarmuka ini menampilkan hasil seleksi bantuan sosial lewat dua lensa etika yang berbeda:
 

@@ -7,6 +7,8 @@ export const Route = createFileRoute("/riwayat")({
       { name: "description", content: "Riwayat audit etika batch bantuan sosial." },
       { property: "og:title", content: "Riwayat Audit — Etika Bantuan" },
       { property: "og:description", content: "Riwayat audit etika batch bantuan sosial." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: () => (

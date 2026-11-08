@@ -10,7 +10,7 @@ afterEach(() => vi.resetAllMocks());
 
 describe("Local server mode", () => {
   it("starts in Demo", () => {
-    vi.mocked(getHealth).mockResolvedValue(true);
+    vi.mocked(getHealth).mockImplementation(() => new Promise(() => {}));
     render(<ModeProvider><Probe /></ModeProvider>);
     expect(state.mode).toBe("demo");
   });
@@ -22,7 +22,7 @@ describe("Local server mode", () => {
     expect(state.notice).toBeTruthy();
   });
   it("returns to Demo when a Live API call reports a lost connection", () => {
-    vi.mocked(getHealth).mockResolvedValue(true);
+    vi.mocked(getHealth).mockImplementation(() => new Promise(() => {}));
     render(<ModeProvider><Probe /></ModeProvider>);
     act(() => state.setMode("live"));
     expect(state.mode).toBe("live");

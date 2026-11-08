@@ -1,5 +1,5 @@
 # Final polish
-- [ ] Friendly Live fallback and default Demo
-- [ ] Narrow-screen applicant and result layouts
-- [ ] About section and page metadata
-- [ ] Tests and browser checks
+- [x] Friendly Live fallback and default Demo
+- [x] Narrow-screen applicant and result layouts
+- [x] About section and page metadata
+- [x] Tests and browser checks

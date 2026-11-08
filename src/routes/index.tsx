@@ -530,7 +530,13 @@ function Results({ data, isDemo, ambang, open, toggle }: {
               <span className={`inline-flex items-center gap-1 rounded border px-2 py-0.5 text-xs font-medium ${s.cls}`}><s.Icon className="h-3.5 w-3.5" />{s.label}</span>
               <dl className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-2 text-xs">
                 <dt className="text-muted-foreground">Dasar</dt><dd className={a.wajib_kant ? "text-kant" : "text-bentham"}>{a.wajib_kant ? "Kewajiban Kant" : "Skor Bentham"}</dd>
-                <dt className="text-muted-foreground">Skor gabungan</dt><dd className="num">{a.skor_gabungan.toFixed(1)}</dd>
+                <dt className="text-muted-foreground">Skor gabungan</dt><dd className="flex items-center gap-2">
+                  <div className="relative h-1.5 w-24 rounded-full bg-muted" aria-hidden>
+                    <div className={`h-full rounded-full ${a.wajib_kant ? "bg-kant" : "bg-bentham"}`} style={{ width: `${Math.min(100, a.skor_gabungan)}%` }} />
+                    <div className="absolute -top-1 h-3.5 w-px bg-foreground" style={{ left: `${ambang}%` }} title={`Ambang ${ambang}`} />
+                  </div>
+                  <span className="num">{a.skor_gabungan.toFixed(1)}</span>
+                </dd>
                 <dt className="text-muted-foreground">Bias</dt><dd><span className={`rounded border px-2 py-0.5 ${BIAS[a.level_bias]}`}>{a.level_bias}</span></dd>
                 <dt className="text-muted-foreground">Dana</dt><dd className="num">{formatRupiah(a.dana_dialokasikan)}</dd>
               </dl>

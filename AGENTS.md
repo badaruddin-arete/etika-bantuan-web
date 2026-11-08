@@ -28,3 +28,6 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+- Keep local-server reachability fallback in ModeProvider and guard stale page requests after mode changes so Live responses cannot overwrite Demo state.
+- Use stacked applicant and allocation cards below the md breakpoint; keep desktop tables horizontally scrollable with minimum widths so names and headings remain readable.

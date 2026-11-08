@@ -19,10 +19,12 @@ import { useMode } from "@/lib/mode";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Audit Batch — Etika Bantuan" },
-      { name: "description", content: "Audit etika alokasi bantuan sosial: skor Bentham dan kewajiban Kant dalam satu batch." },
-      { property: "og:title", content: "Audit Batch — Etika Bantuan" },
-      { property: "og:description", content: "Audit etika alokasi bantuan sosial: skor Bentham dan kewajiban Kant dalam satu batch." },
+      { title: "Etika Bantuan - Audit Seleksi Bantuan Sosial" },
+      { name: "description", content: "Prototipe audit seleksi bantuan sosial dengan Utilitarianisme Bentham dan Deontologi Kant. Semua parameter kebijakan bersifat ilustratif, bukan untuk keputusan nyata." },
+      { property: "og:title", content: "Etika Bantuan - Audit Seleksi Bantuan Sosial" },
+      { property: "og:description", content: "Audit seleksi bantuan sosial dengan kerangka etika Bentham dan Kant; parameter ilustratif, bukan untuk keputusan nyata." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: BatchAudit,
@@ -76,7 +78,9 @@ function RupiahInput({ value, onValue, allowEmpty, className, ...rest }: {
 }
 
 function BatchAudit() {
-  const { mode } = useMode();
+  const { mode, fallbackToDemo } = useMode();
+  const currentMode = useRef(mode);
+  currentMode.current = mode;
   const [kuota, setKuota] = useState(4_000_000);
   const [besaran, setBesaran] = useState<number | "">(DEMO_KONFIGURASI.nilai_bantuan_per_pemohon);
   const [ambang, setAmbang] = useState(DEMO_KONFIGURASI.ambang_kuota);
@@ -90,14 +94,21 @@ function BatchAudit() {
   const focusRowId = useRef<number | null>(null);
 
   useEffect(() => {
+    let active = true;
     setResult(null);
     setError(null);
     getKonfigurasi(mode)
       .then((k) => {
+        if (!active) return;
         setAmbang(k.ambang_kuota);
         setBesaran(k.nilai_bantuan_per_pemohon);
       })
-      .catch((e) => setError(toErr(e, "Gagal memuat konfigurasi.")));
+      .catch((e) => {
+        if (!active) return;
+        if (mode === "live" && e instanceof ApiError && e.kind === "network") fallbackToDemo();
+        else setError(toErr(e, "Gagal memuat konfigurasi."));
+      });
+    return () => { active = false; };
   }, [mode]);
 
   useEffect(() => {
@@ -156,11 +167,14 @@ function BatchAudit() {
         ...(besaran === "" ? {} : { besaran_bantuan_per_pemohon: besaran }),
         pemohon: rows.map(({ id: _id, ...p }) => p),
       });
+      if (currentMode.current !== mode) return;
       setResult({ data, mode });
       setOpen(new Set());
     } catch (e) {
+      if (currentMode.current !== mode) return;
       setResult(null);
-      setError(toErr(e, "Terjadi galat tak terduga."));
+      if (mode === "live" && e instanceof ApiError && e.kind === "network") fallbackToDemo();
+      else setError(toErr(e, "Terjadi galat tak terduga."));
     } finally {
       setLoading(false);
     }
@@ -263,9 +277,9 @@ function BatchAudit() {
 
       {/* Applicants */}
       <section className="rounded-md border bg-card">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b p-4">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-b p-4 sm:flex sm:justify-between">
           <h2 className="text-sm font-medium">Pemohon <span className="num text-muted-foreground">({rows.length})</span></h2>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
             <Button variant="outline" size="sm" onClick={() => setRows(KASUS_UJI.map((p) => ({ ...p, id: nextId++ })))}>
               <FlaskConical className="h-4 w-4" />Muat 5 kasus uji
             </Button>
@@ -277,9 +291,9 @@ function BatchAudit() {
 
         {/* Desktop / tablet table */}
         <div className="hidden overflow-x-auto md:block">
-          <table className="w-full table-fixed text-sm">
+          <table className="w-full min-w-[860px] table-fixed text-sm">
             <colgroup>
-              <col /><col className="w-40" /><col className="w-24" /><col className="w-16" /><col className="w-52" /><col className="w-12" />
+              <col className="w-64" /><col className="w-40" /><col className="w-24" /><col className="w-16" /><col className="w-52" /><col className="w-12" />
             </colgroup>
             <thead className="text-left text-xs text-muted-foreground">
               <tr className="border-b">
@@ -370,6 +384,13 @@ function BatchAudit() {
         <Results data={result.data} isDemo={result.mode === "demo"} ambang={ambang} open={open}
           toggle={(i) => setOpen((s) => { const n = new Set(s); n.has(i) ? n.delete(i) : n.add(i); return n; })} />
       )}
+      <section className="space-y-3 border-t pt-6 text-sm" aria-labelledby="about-project">
+        <h2 id="about-project" className="font-serif text-xl">Tentang proyek</h2>
+        <p>Audit seleksi bantuan sosial dengan dua kerangka etika: Utilitarianisme (Bentham) menghitung manfaat, Deontologi (Kant) menetapkan kewajiban mutlak yang mendahului hitungan.</p>
+        <p className="text-muted-foreground">Semua parameter kebijakan bersifat ilustratif dan tidak untuk keputusan nyata.</p>
+        <p className="text-muted-foreground">Dirancang oleh M. Badaruddin dengan bantuan AI (Claude); antarmuka dibuat dengan Lovable.</p>
+        <a className="inline-block underline underline-offset-4" href="https://github.com/badaruddin-arete/etika-bantuan-api" target="_blank" rel="noopener noreferrer">Kode backend di GitHub</a>
+      </section>
     </div>
   );
 }
@@ -398,7 +419,7 @@ function Results({ data, isDemo, ambang, open, toggle }: {
   ];
   return (
     <section className="space-y-6 animate-in fade-in duration-200">
-      <div className="flex items-baseline justify-between">
+      <div className="grid gap-2 sm:flex sm:items-baseline sm:justify-between">
         <h2 className="font-serif text-2xl">Hasil audit</h2>
         {isDemo ? (
           <span className="rounded border border-warn/40 bg-warn-soft px-2 py-0.5 text-xs text-warn">
@@ -430,8 +451,8 @@ function Results({ data, isDemo, ambang, open, toggle }: {
         );
       })}
 
-      <div className="overflow-x-auto rounded-md border bg-card">
-        <table className="w-full text-sm">
+      <div className="hidden overflow-x-auto rounded-md border bg-card md:block">
+        <table className="w-full min-w-[1000px] text-sm">
           <thead className="text-left text-xs text-muted-foreground">
             <tr className="border-b">
               <th className="p-3 w-8" /><th className="p-3 font-normal">#</th>
@@ -494,6 +515,36 @@ function Results({ data, isDemo, ambang, open, toggle }: {
           </tbody>
         </table>
       </div>
+      <ul className="space-y-3 md:hidden">
+        {data.alokasi.map((a) => {
+          const s = STATUS[a.status_alokasi];
+          const isOpen = open.has(a.indeks_input);
+          return (
+            <li key={a.indeks_input} className="min-w-0 space-y-3 rounded-md border bg-card p-4">
+              <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
+                <h3 className="min-w-0 break-words text-sm font-medium"><span className="num text-muted-foreground">{a.peringkat}. </span>{a.nama}</h3>
+                <Button variant="ghost" size="icon" aria-label={`Penjelasan alokasi ${a.nama}`} aria-expanded={isOpen} onClick={() => toggle(a.indeks_input)}>
+                  {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                </Button>
+              </div>
+              <span className={`inline-flex items-center gap-1 rounded border px-2 py-0.5 text-xs font-medium ${s.cls}`}><s.Icon className="h-3.5 w-3.5" />{s.label}</span>
+              <dl className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-2 text-xs">
+                <dt className="text-muted-foreground">Dasar</dt><dd className={a.wajib_kant ? "text-kant" : "text-bentham"}>{a.wajib_kant ? "Kewajiban Kant" : "Skor Bentham"}</dd>
+                <dt className="text-muted-foreground">Skor gabungan</dt><dd className="flex items-center gap-2">
+                  <div className="relative h-1.5 w-24 rounded-full bg-muted" aria-hidden>
+                    <div className={`h-full rounded-full ${a.wajib_kant ? "bg-kant" : "bg-bentham"}`} style={{ width: `${Math.min(100, a.skor_gabungan)}%` }} />
+                    <div className="absolute -top-1 h-3.5 w-px bg-foreground" style={{ left: `${ambang}%` }} title={`Ambang ${ambang}`} />
+                  </div>
+                  <span className="num">{a.skor_gabungan.toFixed(1)}</span>
+                </dd>
+                <dt className="text-muted-foreground">Bias</dt><dd><span className={`rounded border px-2 py-0.5 ${BIAS[a.level_bias]}`}>{a.level_bias}</span></dd>
+                <dt className="text-muted-foreground">Dana</dt><dd className="num">{formatRupiah(a.dana_dialokasikan)}</dd>
+              </dl>
+              {isOpen && <div className="border-t pt-3"><div className="text-xs text-muted-foreground">Penjelasan alokasi</div><p className="mt-1 font-serif text-base leading-relaxed">{a.penjelasan_alokasi}</p></div>}
+            </li>
+          );
+        })}
+      </ul>
       <p className="text-xs text-muted-foreground">Garis tegak pada bar skor menandai ambang kuota ({ambang}).</p>
     </section>
   );

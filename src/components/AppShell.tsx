@@ -75,33 +75,37 @@ function ConnectionChip() {
         ? "Live · Terhubung"
         : "Live · Memeriksa…";
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex min-w-0 items-center gap-2 sm:gap-3">
       <span
         role="status"
-        className={`inline-flex items-center gap-1.5 rounded border px-2 py-0.5 text-xs ${tone}`}
+        className={`inline-flex min-w-0 items-center gap-1.5 rounded border px-2 py-0.5 text-xs ${tone}`}
       >
-        <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
+        <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${dot}`} />
         {label}
       </span>
-      <label className="flex items-center gap-2 text-xs text-muted-foreground">
-        Live
-        <Switch checked={live} onCheckedChange={(v) => setMode(v ? "live" : "demo")} aria-label="Mode live" />
+      <label className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground">
+        <span>Live (butuh<br className="sm:hidden" /> server lokal)</span>
+        <Switch checked={live} onCheckedChange={(v) => setMode(v ? "live" : "demo")} aria-label="Live (butuh server lokal)" />
       </label>
     </div>
   );
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
+  const { notice } = useMode();
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
         <AppSidebar />
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="flex h-12 items-center justify-between border-b px-3">
+          <header className="grid min-h-12 grid-cols-[auto_minmax(0,1fr)] items-center gap-2 border-b px-3 py-2">
             <SidebarTrigger />
-            <ConnectionChip />
+            <div className="flex min-w-0 justify-end"><ConnectionChip /></div>
           </header>
-          <main className="flex-1 px-6 py-8">{children}</main>
+          <main className="min-w-0 flex-1 px-4 py-8 sm:px-6">
+            {notice && <p role="status" className="mx-auto mb-6 max-w-6xl rounded border border-warn/40 bg-warn-soft p-3 text-sm text-warn">{notice}</p>}
+            {children}
+          </main>
           <footer className="border-t px-6 py-4 text-xs text-muted-foreground">
             Prototipe portofolio. Parameter kebijakan bersifat ilustratif dan data bersifat fiktif.
           </footer>

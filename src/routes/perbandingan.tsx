@@ -7,6 +7,8 @@ export const Route = createFileRoute("/perbandingan")({
       { name: "description", content: "Bandingkan lensa Bentham dan Kant dalam seleksi bantuan sosial." },
       { property: "og:title", content: "Perbandingan Etika — Etika Bantuan" },
       { property: "og:description", content: "Bandingkan lensa Bentham dan Kant dalam seleksi bantuan sosial." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: () => (

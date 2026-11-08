@@ -19,16 +19,16 @@ Pengunjung demo publik memakai mode Demo. Mode Live ditujukan untuk pengembangan
 
 ## Menjalankan secara lokal
 
-Butuh Node.js.
+Butuh [Bun](https://bun.sh) (atau Node.js).
 
 ```bash
-npm install
-npm run dev
+bun install
+bun run dev
 ```
 
 ## Teknologi
 
-React, TypeScript, Vite, Tailwind CSS, dan shadcn/ui.
+React, TypeScript, TanStack Start (berbasis Vite), Tailwind CSS, dan shadcn/ui.
 
 ## Keterbatasan
 

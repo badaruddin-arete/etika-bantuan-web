@@ -107,7 +107,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             {children}
           </main>
           <footer className="border-t px-6 py-4 text-xs text-muted-foreground">
-            Prototipe portofolio. Parameter kebijakan bersifat ilustratif dan data bersifat fiktif.
+            Prototipe edukasi. Parameter kebijakan bersifat ilustratif dan data bersifat fiktif.
           </footer>
         </div>
       </div>
